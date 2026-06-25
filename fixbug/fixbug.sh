@@ -17,12 +17,13 @@ $SUPPORTED_ROM_STR:
 Pixel
 OneUI
 HyperOS
+MIUI
 OxygenOS
 ColorOS
 --------------------
 "
 case "$os_type" in
-  "Pixel"|"OneUI"|"HyperOS"|"OxygenOS"|"ColorOS")
+  "Pixel"|"OneUI"|"HyperOS"|"MIUI"|"OxygenOS"|"ColorOS"|"Flyme"|"Nubia"|"OPPO"|"Vivo"|"H2OS")
     echo "$FIXING_STR"
     local fix_script="$(echo $os_type | tr "[:upper:]" "[:lower:]").sh"
     [ -f "./$fix_script" ] && "./$fix_script"

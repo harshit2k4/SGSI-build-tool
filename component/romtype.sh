@@ -57,7 +57,7 @@ case "$os_type" in
     $debloat_foldir/$debloat_script "$systemdir"
     echo "true" > $TARGETDIR/apex_state
     ;;
-  "OneUI"|"HyperOS"|"OxygenOS"|"ColorOS")
+  "OneUI"|"HyperOS"|"MIUI"|"OxygenOS"|"ColorOS"|"Flyme"|"Nubia"|"OPPO"|"Vivo"|"H2OS")
     echo "$OS_TYPE_CHECK_STR: $os_type"
     [ -f "$vintf_folder/add_vintf.sh" ] && "$vintf_folder/add_vintf.sh"
     [ -f "$rom_folder/make.sh" ] && "$rom_folder/make.sh"
