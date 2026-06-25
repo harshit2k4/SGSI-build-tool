@@ -24,7 +24,7 @@ dependency_install(){
     if [[ "$OSTYPE" == "linux-gnu" ]]; then
         echo -e "\033[33m [$INFO_STR] $DETECTED_LINUX \033[0m"
         echo -e "\033[33m [$INFO_STR] $INSTPKG_WITH_APT ... \033[0m"
-        sudo apt install -y git p7zip curl wget unace unrar zip unzip p7zip-full p7zip-rar sharutils uudeview mpack arj cabextract file-roller aptitude device-tree-compiler squashfs-tools liblzma-dev liblz4-tool gawk aria2 selinux-utils
+        sudo apt install -y git p7zip curl wget unace unrar zip unzip p7zip-full p7zip-rar sharutils uudeview mpack arj cabextract file-roller aptitude device-tree-compiler squashfs-tools liblzma-dev liblz4-tool gawk aria2 selinux-utils erofs-utils
         sudo apt update --fix-missing
         
     elif [[ "$OSTYPE" == "darwin"* ]]; then
@@ -36,34 +36,25 @@ dependency_install(){
 
 python_install(){
         echo -e "\033[33m [$INFO_STR] $PY2ANDPIP_INST ... \033[0m"
-        sudo apt-get --purge remove -y python3-pip
-        sudo apt install python aptitude -y
-        sudo aptitude install python-dev -y
-        sudo add-apt-repository universe
-        sudo python get-pip.py
         sudo apt install python3 python3-pip -y
 }
 
 pip_module_install(){
     echo -e "\033[33m [$INFO_STR] $INSTALLING_PYTHONMOD... \033[0m"
     if [[ "$USE_MIRROR_FOR_PIP" == "true" ]] ; then
-        sudo pip install backports.lzma pycryptodome pycrypto -i $PIP_MIRROR
-        sudo pip3 install backports.lzma pycryptodome pycrypto -i $PIP_MIRROR
+        sudo python3 -m pip install pycryptodome -i $PIP_MIRROR
     elif [[ "$USE_MIRROR_FOR_PIP" == "false" ]] ; then
-        sudo pip install backports.lzma pycryptodome pycrypto
-        sudo pip3 install backports.lzma pycryptodome pycrypto
+        sudo python3 -m pip install pycryptodome
     fi
     
     echo -e "\033[33m [$INFO_STR] $INSTALLING_PYTHONMOD requirements\033[0m"
     if [[ "$USE_MIRROR_FOR_PIP" == "true" ]] ; then
         for requirements_list in $(find $LOCALDIR -type f | grep "requirements.txt");do
-            sudo pip install -r $requirements_list -i $PIP_MIRROR
-            sudo pip3 install -r $requirements_list -i $PIP_MIRROR
+            sudo python3 -m pip install -r $requirements_list -i $PIP_MIRROR
         done
     elif [[ "$USE_MIRROR_FOR_PIP" == "false" ]] ; then
         for requirements_list in $(find $LOCALDIR -type f | grep "requirements.txt");do
-            sudo pip install -r $requirements_list
-            sudo pip3 install -r $requirements_list
+            sudo python3 -m pip install -r $requirements_list
         done
     fi
 }
@@ -80,15 +71,7 @@ debug_packages_version(){
 }
 
 java_install(){
-    if apt list | grep -q openjdk-11-jdk ;then
-        JAVA_PACKAGE="openjdk-11-jdk"
-    else
-        JAVA_PACKAGE="openjdk-8-jdk"
-    fi
-    UNINSTALL_PACKAGE="openjdk-8-jdk"
-    if [[ "$JAVA_PACKAGE" != "$UNINSTALL_PACKAGE" ]];then
-        sudo apt -y purge $UNINSTALL_PACKAGE
-    fi
+    JAVA_PACKAGE="openjdk-17-jdk"
     echo -e "\033[33m [$INFO_STR] $INSTALLING_JAVAPKG: $JAVA_PACKAGE... \033[0m"
     sudo apt install -y $JAVA_PACKAGE default-jre
 }
@@ -102,8 +85,6 @@ dump_welcome
     pip_module_install
 }
 
-debug_packages_version Python python
-debug_packages_version Pip pip
 debug_packages_version Python3 python3
 debug_packages_version Pip3 pip3
 debug_packages_version Java java

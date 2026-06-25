@@ -83,7 +83,7 @@ function firmware_extract() {
       mv ./payload.bin ../payload/
       cd ../payload
       echo $UNZIPINGPLB
-      python ./payload.py ./payload.bin ./out
+      python3 ./payload.py ./payload.bin ./out
       for i in $partition_list ;do
         if [ -e ./out/$i.img ];then
           echo "$i.img $MOVINGIMG"
@@ -99,7 +99,7 @@ function firmware_extract() {
     if [ -e ./${partition}.new.dat.br ];then
       echo "$UNPACKING_STR ${partition}.new.dat.br"
       $bin/brotli -d ${partition}.new.dat.br
-      python $bin/sdat2img.py ${partition}.transfer.list ${partition}.new.dat ./${partition}.img
+      python3 $bin/sdat2img.py ${partition}.transfer.list ${partition}.new.dat ./${partition}.img
       mv ./${partition}.img $IMAGESDIR/
       rm -rf ./${partition}.new.dat
     fi
@@ -109,7 +109,7 @@ function firmware_extract() {
       echo "$SPLIT_DETECTED ${partition}.new.dat, $MERGING_STR"
       cat ./${partition}.new.dat.{1..999} 2>/dev/null >> ./${partition}.new.dat
       rm -rf ./${partition}.new.dat.{1..999}
-      python $bin/sdat2img.py ${partition}.transfer.list ${partition}.new.dat ./${partition}.img
+      python3 $bin/sdat2img.py ${partition}.transfer.list ${partition}.new.dat ./${partition}.img
       mv ./${partition}.img $IMAGESDIR/
       rm -rf ./${partition}.new.dat
     fi
@@ -117,7 +117,7 @@ function firmware_extract() {
     # Detect general new.dat
     if [ -e ./${partition}.new.dat ];then
       echo "$UNPACKING_STR ${partition}.new.dat"
-      python $bin/sdat2img.py ${partition}.transfer.list ${partition}.new.dat ./${partition}.img
+      python3 $bin/sdat2img.py ${partition}.transfer.list ${partition}.new.dat ./${partition}.img
       mv ./${partition}.img $IMAGESDIR/
     fi
 
@@ -131,7 +131,7 @@ function firmware_extract() {
 }
 
 echo $INITINGENV
-chmod -R 777 ./
+
 ./workspace_cleanup.sh > /dev/null 2>&1
 rm -rf $WORKSPACE
 mkdir -p $IMAGESDIR

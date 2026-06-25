@@ -1,5 +1,9 @@
 *.pyc
 *.img
+__pycache__/
+.venv/
+*.log
+*.tmp
 .lang_flag
 SGSI/
 make/*/add_repack_contexts

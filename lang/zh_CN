@@ -40,7 +40,7 @@ DYNAMIC_PARTITION_DETECTED="检测到当前为动态分区"
 CURRENT_SYSTEM_VERSION="当前系统版本"
 
 # setup.sh
-WELCOME="欢迎使用小新大大 sGSI 构建系统"
+WELCOME="欢迎使用 harshit2k4 sGSI 构建系统 (Original by 小新大大)"
 ENVSETUP_TOOLS="构建环境安装"
 SELECT_LANG_STR="如果需要切换语言，请手动执行 language_helper.sh 脚本"
 DETECTING_SYSTEM="正在检测系统"

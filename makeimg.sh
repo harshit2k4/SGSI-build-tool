@@ -197,5 +197,5 @@ if [ -s $TARGETDIR/system.img ];then
   ./get_build_info.sh "$TARGETDIR" "$LOCALDIR/SGSI/system.img" > $LOCALDIR/SGSI/build_info.txt
   rm -rf $TARGETDIR/build.prop
   ./copy.sh
-  chmod -R 777 $LOCALDIR/SGSI
+
 fi

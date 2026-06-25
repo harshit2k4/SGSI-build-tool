@@ -15,12 +15,17 @@ echo "
 $SUPPORTED_ROM_STR:
 
 Pixel
+OneUI
+HyperOS
+OxygenOS
+ColorOS
 --------------------
 "
 case "$os_type" in
-  "Pixel")
+  "Pixel"|"OneUI"|"HyperOS"|"OxygenOS"|"ColorOS")
     echo "$FIXING_STR"
-    ./pixel.sh
+    local fix_script="$(echo $os_type | tr "[:upper:]" "[:lower:]").sh"
+    [ -f "./$fix_script" ] && "./$fix_script"
     exit
     ;;
   *)

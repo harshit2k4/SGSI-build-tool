@@ -75,7 +75,7 @@ function check_source_version() {
   local ret=0
   echo $CURRENT_SYSTEM_VERSION: $sourcever
   case $sourcever in
-  *12*) local ret=0 ;;
+  *12*|*13*|*14*|*15*|*16*) local ret=0 ;;
   *) local ret=1 ;;
   esac
 

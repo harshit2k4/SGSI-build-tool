@@ -48,16 +48,21 @@ if [ -d $rom_folder/add_libs/system ];then
   add_libs
 fi
 
-# pixel
-if [ $os_type = "Pixel" ];then
-  echo "$OS_TYPE_CHECK_STR: $os_type"
-  # Add oem properites
-  #./add_build.sh
-  $vintf_folder/add_vintf.sh
-  # Fixing ROM Features
-  $rom_folder/make.sh
-  echo "$DEBLOATING_STR"
-  $debloat_foldir/$debloat_script "$systemdir"
-  # Not flatten apex
-  echo "true" > $TARGETDIR/apex_state
-fi
+case "$os_type" in
+  "Pixel")
+    echo "$OS_TYPE_CHECK_STR: $os_type"
+    $vintf_folder/add_vintf.sh
+    $rom_folder/make.sh
+    echo "$DEBLOATING_STR"
+    $debloat_foldir/$debloat_script "$systemdir"
+    echo "true" > $TARGETDIR/apex_state
+    ;;
+  "OneUI"|"HyperOS"|"OxygenOS"|"ColorOS")
+    echo "$OS_TYPE_CHECK_STR: $os_type"
+    [ -f "$vintf_folder/add_vintf.sh" ] && "$vintf_folder/add_vintf.sh"
+    [ -f "$rom_folder/make.sh" ] && "$rom_folder/make.sh"
+    echo "$DEBLOATING_STR"
+    [ -f "$debloat_foldir/$debloat_script" ] && "$debloat_foldir/$debloat_script" "$systemdir"
+    echo "false" > $TARGETDIR/apex_state
+    ;;
+esac

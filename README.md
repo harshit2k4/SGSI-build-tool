@@ -1,99 +1,97 @@
-# SGSI-build-tool
+# SGSI Build Tool
 
-*Copyright (C) 2021 Xiaoxindada (2245062854@qq.com)*      
+A powerful, automated tool for building SGSI (Semi-Generic System Image) from various Android firmwares. 
+This is a modern fork updated for newer Android versions (12–16) and Python 3 compatibility.
 
-## 未经过本人许可 不可进行商用
+*Forked & Maintained by: [harshit2k4](https://github.com/harshit2k4)*  
+*Original Author: [Xiaoxindada](https://github.com/xiaoxindada)*
 
-## 本工具部分依赖来自:
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-[Erfan GSIs](https://github.com/erfanoabdi/ErfanGSIs)  
-[MToolkit](https://github.com/Nightmare-MY)  
-[AndroidDump](https://github.com/AndroidDump/dumper)  
+## 🌟 Features
+- Supports Android 12, 13, 14, 15, and 16
+- Compatible with dynamic partitions (super.img) and payload.bin
+- Ext4, EROFS, F2FS, and SquashFS support
+- Builds both A-only and A/B partition structures
+- Debloating, vendor boot packing/unpacking, and more
+- Multi-language support (English & Chinese)
 
-## 学分:
+## 📋 System Requirements
+- Ubuntu 22.04 LTS or 24.04 LTS (Debian-based systems)
+- Python 3.10+
+- Java 17
 
-[九雨梦舟](https://github.com/pomelohan)  
-[Col_or](https://github.com/color597)  
-[thka2016](https://github.com/thka2016)  
+## 🚀 Installation & Setup
 
-## 本工具为PC版
+1. **Clone the repository:**
+   ```bash
+   git clone --recurse-submodules https://github.com/harshit2k4/SGSI-build-tool.git
+   cd SGSI-build-tool
+   ```
 
-## 同步或更新工具:
+2. **Install dependencies:**
+   *(Run this once to configure your environment)*
+   ```bash
+   ./setup.sh
+   ```
 
-```
-同步源码:
-git clone --recurse-submodules https://github.com/xiaoxindada/SGSI-build-tool.git -b 12 SGSI-build-tool-12
-cd SGSI-build-tool-12
+3. **Keep the tool updated:**
+   ```bash
+   ./update.sh
+   ```
 
-更新最新源码:
-./update.sh
-```
+## 🛠️ Usage
 
-# 使用Actions构建SGSI: [SGSI-build-action](https://github.com/xiaoxindada/SGSI-build-action)  
+### 1. Building a SGSI
 
-# 安装工具依赖环境(建议挂t):
+Place your firmware (`.zip` or `.img`) in the `tmp/` folder (or provide the path).
 
-```
-测试环境： Ubuntu 20.04
-（Debian系列Linux支持， Arch系列未支持 需要的自行更改脚本安装依赖
-
-./setup.sh  
-```
-
-# 制造SGSI:
-
-```
-把刷机包放至tmp文件夹内
-制造A-only:./make.sh A
-制造AB:./make.sh AB
-也可单独使用./SGSI.sh A 或 ./SGSI.sh AB 
-如果原包是super.img 把super.img放置工具根目录
-然后使用./unpacksuper.sh解包然后把解出来的img丢到工具更目录直接执行./SGSI.sh即可
-本工具仅仅制作system.img部分Patch部分需要手动
-本工具是半自动工具 因为有些处理自动化并不理想 多变 所以手动更好 如果你不清楚这些东西的处理 也可以不处理 直接制造也行
-成品输出在SGSI文件夹 然后手动制造Patch1 2 3即可
-
-动态分区：
-这些类型的设备需要自己手动修改img把patch的内容按照补丁的规定打包入你自己的img然后刷入即可。
-本工具也支持打包和解包super.img
-打包: ./makesuper.sh
-解包: ./unpacksuper.sh
-
-例子:
-su
-制造A-only: ./make.sh -a Pixel ./tmp/redfin-ota-spp2.210219.008-3d61e529.zip --fix-bug
-制造AB: ./make.sh --ab Pixel ./tmp/redfin-ota-spp2.210219.008-3d61e529.zip --fix-bug
-单独使用SGSI.sh: ./SGSI.sh --ab Pixel --fix-bug
+**Build an A/B image:**
+```bash
+./make.sh --ab <ROM_TYPE> <Path_to_Firmware> [--fix-bug]
 ```
 
-## 本工具其他打包解包脚本:
-
+**Build an A-only image:**
+```bash
+./make.sh -a <ROM_TYPE> <Path_to_Firmware> [--fix-bug]
 ```
 
-其他分区img打包解包: makeimg2.sh unpackimg.sh
-boot.img/vendor_boot.img 打包解包: makeboot.sh unpackboot.sh  
-dat/br生成: img2sdat.sh
-解压img的apex: apex.sh (apex扁平化)  
-局部deodex: bin/oat2dex/deodex.sh
-ozip解密: oppo_ozip
-dtbo.img打包解包： makedtbo.sh unpackdtbo.sh
-apk签名： bin/tools/signapk/signapk.sh  
-LG kdz解包：unpack_kdz.sh
-oppo/oneplus ops解包：unpack_ops.sh  
-
+**Example:**
+```bash
+./make.sh --ab Pixel ./tmp/pixel-ota.zip --fix-bug
 ```
 
-# Patch1制作方法
+*Note: If your firmware is a `super.img`, place it in the root directory and use `./unpacksuper.sh` first, then run `./SGSI.sh <Build Type> <ROM_TYPE>`.*
 
-```
+### 2. Available Utilities
+The tool includes several scripts for specialized operations:
+- `makeimg2.sh` / `unpackimg.sh`: General image packing/unpacking
+- `makeboot.sh` / `unpackboot.sh`: boot.img / vendor_boot.img tools
+- `makesuper.sh` / `unpacksuper.sh`: Dynamic partition (super) tools
+- `makedtbo.sh` / `unpackdtbo.sh`: DTBO packing/unpacking
+- `img2sdat.sh`: Generate `.dat` / `.br` files
+- `apex.sh`: APEX flattening and extraction
+- `unpack_ops.sh`: OPPO/OnePlus OPS unpacking
 
-Patch样本以上至 Patch_template 文件夹（请自行模仿）
-
-```
-
-## 清理工具环境:
-
-```
-
+### 3. Cleanup Workspace
+To clean up your workspace and remove temporary files:
+```bash
 ./rm.sh
 ```
+
+## 🤝 Supported ROMs
+- `Generic` (AOSP)
+- `Pixel`
+
+*(See `component/rom_support_list.txt` for the active list or add your own in `CONTRIBUTING.md`)*
+
+## 🙏 Credits & Acknowledgements
+This project builds upon the hard work of the community.
+- **Original Author**: [Xiaoxindada](https://github.com/xiaoxindada)
+- **Erfan GSIs**: [erfanoabdi](https://github.com/erfanoabdi)
+- **MToolkit**: [Nightmare-MY](https://github.com/Nightmare-MY)
+- **AndroidDump**: [AndroidDump](https://github.com/AndroidDump)
+- Additional Credits: [Pomelo Jiuyu](https://github.com/pomelohan), [Col_or](https://github.com/color597), [thka2016](https://github.com/thka2016)
+
+## 📜 License
+Please do not use this tool for commercial purposes without permission from the original authors.

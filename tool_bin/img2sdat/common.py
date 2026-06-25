@@ -18,7 +18,8 @@ import copy
 import errno
 import getopt
 import getpass
-import imp
+import importlib
+import importlib.util
 import os
 import platform
 import re
@@ -384,7 +385,7 @@ def LoadRecoveryFSTab(read_helper, fstab_version, system_root_image=False):
   # system. Other areas assume system is always at "/system" so point /system
   # at /.
   if system_root_image:
-    assert not d.has_key("/system") and d.has_key("/")
+    assert "/system" not in d and "/" in d
     d["/system"] = d["/"]
   return d
 
@@ -954,7 +955,7 @@ class PasswordManager(object):
     values.
     """
     result = {}
-    for k, v in sorted(current.iteritems()):
+    for k, v in sorted(current.items()):
       if v:
         result[k] = v
       else:
@@ -975,7 +976,7 @@ class PasswordManager(object):
     f.write("# (Additional spaces are harmless.)\n\n")
 
     first_line = None
-    sorted_list = sorted([(not v, k, v) for (k, v) in current.iteritems()])
+    sorted_list = sorted([(not v, k, v) for (k, v) in current.items()])
     for i, (_, k, v) in enumerate(sorted_list):
       f.write("[[[  %s  ]]] %s\n" % (v, k))
       if not v and first_line is None:
@@ -1110,7 +1111,7 @@ class DeviceSpecificParams(object):
     """Keyword arguments to the constructor become attributes of this
     object, which is passed to all functions in the device-specific
     module."""
-    for k, v in kwargs.iteritems():
+    for k, v in kwargs.items():
       setattr(self, k, v)
     self.extras = OPTIONS.extras
 
@@ -1120,15 +1121,17 @@ class DeviceSpecificParams(object):
         return
       try:
         if os.path.isdir(path):
-          info = imp.find_module("releasetools", [path])
+          module_path = os.path.join(path, "releasetools.py")
         else:
           d, f = os.path.split(path)
           b, x = os.path.splitext(f)
           if x == ".py":
             f = b
-          info = imp.find_module(f, [d])
+          module_path = os.path.join(d, f + ".py")
+        spec = importlib.util.spec_from_file_location("device_specific", module_path)
+        self.module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(self.module)
         print("loaded device-specific extensions from", path)
-        self.module = imp.load_module("device_specific", *info)
       except ImportError:
         print("unable to load device-specific module; assuming none")
 

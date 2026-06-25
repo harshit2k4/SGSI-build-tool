@@ -5,7 +5,7 @@ cd $LOCALDIR
 source ./bin.sh 
 source ./language_helper.sh
 
-chmod -R 777 ./
+
 rm -rf $WORKSPACE
 rm -rf ./new_dat
 rm -rf ./boot

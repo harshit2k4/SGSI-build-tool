@@ -25,31 +25,37 @@ echo "$EXTRACTING_EXTRA_APEX"
 
 # Prebuilt vndk.current
 rm -rf $systemdir/apex/com.android.vndk.current*
-if [ $current_sdk_ver = 31 ]; then
-  if [ ! -f $systemdir/com.android.vndk.v31.apex ]; then
-    7z x -y $LOCALDIR/com.android.vndk.v31.apex.7z -o$systemdir/apex/ >/dev/null 2>&1
-    mv $systemdir/apex/com.android.vndk.v31.apex $systemdir/apex/com.android.vndk.current.apex
-  fi
-fi
-if [ $current_sdk_ver = 32 ]; then
-  if [ ! -f $systemdir/com.android.vndk.v32.apex ]; then
-    7z x -y $LOCALDIR/com.android.vndk.v32.apex.7z -o$systemdir/apex/ >/dev/null 2>&1
-    mv $systemdir/apex/com.android.vndk.v32.apex $systemdir/apex/com.android.vndk.current.apex
+if [ "$current_sdk_ver" -ge 31 ]; then
+  VNDK_FILE="com.android.vndk.v${current_sdk_ver}.apex"
+  VNDK_7Z="com.android.vndk.v${current_sdk_ver}.apex.7z"
+  if [ ! -f "$systemdir/$VNDK_FILE" ]; then
+    if [ ! -f "$LOCALDIR/$VNDK_7Z" ]; then
+      echo "Downloading $VNDK_7Z..."
+      wget -q "https://github.com/harshit2k4/SGSI-build-tool/releases/download/vndk/$VNDK_7Z" -O "$LOCALDIR/$VNDK_7Z" || true
+    fi
+    if [ -f "$LOCALDIR/$VNDK_7Z" ]; then
+      7z x -y "$LOCALDIR/$VNDK_7Z" -o"$systemdir/apex/" >/dev/null 2>&1
+      mv "$systemdir/apex/$VNDK_FILE" "$systemdir/apex/com.android.vndk.current.apex"
+    fi
   fi
 fi
 
 # different vndk version
-if [ ! -f $systemdir/com.android.vndk.v29.apex ]; then
-  7z x -y $LOCALDIR/com.android.vndk.v29.apex.7z -o$systemdir/apex/ >/dev/null 2>&1
-fi
-if [ ! -f $systemdir/com.android.vndk.v30.apex ]; then
-  7z x -y $LOCALDIR/com.android.vndk.v30.apex.7z -o$systemdir/apex/ >/dev/null 2>&1
-fi
-if [ $current_sdk_ver = 32 ]; then
-  if [ ! -f $systemdir/com.android.vndk.v31.apex ]; then
-    7z x -y $LOCALDIR/com.android.vndk.v31.apex.7z -o$systemdir/apex/ >/dev/null 2>&1
+for v in 29 30 31 32 33 34 35 36; do
+  if [ "$current_sdk_ver" -ge "$v" ]; then
+    VNDK_FILE="com.android.vndk.v${v}.apex"
+    VNDK_7Z="com.android.vndk.v${v}.apex.7z"
+    if [ ! -f "$systemdir/apex/$VNDK_FILE" ] && [ ! -f "$systemdir/$VNDK_FILE" ]; then
+      if [ ! -f "$LOCALDIR/$VNDK_7Z" ]; then
+        echo "Downloading $VNDK_7Z..."
+        wget -q "https://github.com/harshit2k4/SGSI-build-tool/releases/download/vndk/$VNDK_7Z" -O "$LOCALDIR/$VNDK_7Z" || true
+      fi
+      if [ -f "$LOCALDIR/$VNDK_7Z" ]; then
+        7z x -y "$LOCALDIR/$VNDK_7Z" -o"$systemdir/apex/" >/dev/null 2>&1
+      fi
+    fi
   fi
-fi
+done
 
 cd $bin/apex_tools
 ./apex_extractor.sh "$TARGETDIR" "$systemdir/apex"
@@ -100,19 +106,12 @@ elif [ $(cat $TARGETDIR/apex_state) = false ]; then
 fi
 
 # Create vndk symlinks
-rm -rf $systemdir/lib/vndk-29 $systemdir/lib/vndk-sp-29
-rm -rf $systemdir/lib/vndk-30 $systemdir/lib/vndk-sp-30
-rm -rf $systemdir/lib/vndk-31 $systemdir/lib/vndk-sp-31
-if [ $current_sdk_ver = 32 ]; then
-  rm -rf $systemdir/lib/vndk-32 $systemdir/lib/vndk-sp-32
-fi
-
-rm -rf $systemdir/lib64/vndk-29 $systemdir/lib64/vndk-sp-29
-rm -rf $systemdir/lib64/vndk-30 $systemdir/lib64/vndk-sp-30
-rm -rf $systemdir/lib64/vndk-31 $systemdir/lib64/vndk-sp-31
-if [ $current_sdk_ver = 32 ]; then
-  rm -rf $systemdir/lib64/vndk-32 $systemdir/lib64/vndk-sp-32
-fi
+for v in 29 30 31 32 33 34 35 36; do
+  if [ "$current_sdk_ver" -ge "$v" ]; then
+    rm -rf $systemdir/lib/vndk-$v $systemdir/lib/vndk-sp-$v
+    rm -rf $systemdir/lib64/vndk-$v $systemdir/lib64/vndk-sp-$v
+  fi
+done
 
 ln -s /apex/com.android.vndk.v29/lib $systemdir/lib/vndk-29
 ln -s /apex/com.android.vndk.v29/lib $systemdir/lib/vndk-sp-29
@@ -124,21 +123,15 @@ ln -s /apex/com.android.vndk.v29/lib64 $systemdir/lib64/vndk-sp-29
 manifest_file="$systemdir/system_ext/etc/vintf/manifest.xml"
 if [ -f $manifest_file ]; then
   sed -i "/<\/manifest>/d" $manifest_file
-  cat >>"$manifest_file" <<EOF
+  for v in 29 30 31 32 33 34 35 36; do
+    if [ "$current_sdk_ver" -gt "$v" ] || [ "$current_sdk_ver" -ge 29 ] && [ "$v" -le 30 ]; then
+      cat >>"$manifest_file" <<EOF
     <vendor-ndk>
-        <version>29</version>
-    </vendor-ndk>
-    <vendor-ndk>
-        <version>30</version>
-    </vendor-ndk>
-EOF
-  if [ $current_sdk_ver = 32 ]; then
-    cat >>"$manifest_file" <<EOF
-    <vendor-ndk>
-        <version>31</version>
+        <version>${v}</version>
     </vendor-ndk>
 EOF
-  fi
+    fi
+  done
   echo "" >>$manifest_file
   echo "</manifest>" >>$manifest_file
 fi

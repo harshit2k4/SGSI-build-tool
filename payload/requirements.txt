@@ -1,3 +1,2 @@
-protobuf==3.17.3
-six==1.11.0
+protobuf>=4.21,<6
 bsdiff4>=1.1.5

@@ -42,7 +42,7 @@ DYNAMIC_PARTITION_DETECTED="Dynamic Partition Detected"
 CURRENT_SYSTEM_VERSION="current system version"
 
 # setup.sh
-WELCOME="Welcome Xiaoxindada sGSI Build Tools"
+WELCOME="Welcome harshit2k4 sGSI Build Tools (Original by Xiaoxindada)"
 ENVSETUP_TOOLS="Build Environment Setup"
 SELECT_LANG_STR="If you need to switch language, run language_helper.sh script"
 DETECTING_SYSTEM="Detecting System"
