@@ -1274,13 +1274,13 @@ def AddParametricTests(tested_method_name, arg_space, validate_func=None):
                (values) associated with them.
     validate_func: A function used for validating test argument combinations.
   """
-  for value_tuple in itertools.product(*arg_space.itervalues()):
-    run_dargs = dict(zip(arg_space.iterkeys(), value_tuple))
+  for value_tuple in itertools.product(*arg_space.values()):
+    run_dargs = dict(zip(arg_space.keys(), value_tuple))
     if validate_func and not validate_func(**run_dargs):
       continue
     run_method_name = 'Do%sTest' % tested_method_name
     test_method_name = 'test%s' % tested_method_name
-    for arg_key, arg_val in run_dargs.iteritems():
+    for arg_key, arg_val in run_dargs.items():
       if arg_val or type(arg_val) is int:
         test_method_name += '__%s=%s' % (arg_key, arg_val)
     setattr(PayloadCheckerTest, test_method_name,

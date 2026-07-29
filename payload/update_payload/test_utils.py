@@ -70,7 +70,7 @@ def _WriteInt(file_obj, size, is_unsigned, val):
   """
   try:
     file_obj.write(struct.pack(common.IntPackingFmtStr(size, is_unsigned), val))
-  except IOError, e:
+  except IOError as e:
     raise payload.PayloadError('error writing to file (%s): %s' %
                                (file_obj.name, e))
 

@@ -666,7 +666,7 @@ class PayloadChecker(object):
             'Apparent full payload contains old_{kernel,rootfs}_info.')
       self.payload_type = _TYPE_DELTA
 
-      for part, (msg, part_report) in self.old_part_info.iteritems():
+      for part, (msg, part_report) in self.old_part_info.items():
         # Check: {size, hash} present in old_{kernel,rootfs}_info.
         field = 'old_%s_info' % part
         self.old_fs_sizes[part] = self._CheckMandatoryField(msg, 'size',
@@ -687,7 +687,7 @@ class PayloadChecker(object):
       self.payload_type = _TYPE_FULL
 
     # Check: new_{kernel,rootfs}_info present; contains {size, hash}.
-    for part, (msg, part_report) in self.new_part_info.iteritems():
+    for part, (msg, part_report) in self.new_part_info.items():
       field = 'new_%s_info' % part
       self.new_fs_sizes[part] = self._CheckMandatoryField(msg, 'size',
                                                           part_report, field)
@@ -763,7 +763,7 @@ class PayloadChecker(object):
               (ex_name, common.FormatExtent(ex, self.block_size), usable_size))
 
         # Record block usage.
-        for i in xrange(start_block, end_block):
+        for i in range(start_block, end_block):
           block_counters[i] += 1
       elif not (allow_pseudo or (allow_signature and len(extents) == 1)):
         # Pseudo-extents must be allowed explicitly, or otherwise be part of a
